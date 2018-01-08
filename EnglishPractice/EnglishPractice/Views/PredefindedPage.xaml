@@ -19,16 +19,37 @@
 
         <TextBlock
             x:Name="TitlePage"
-            x:Uid="Predefinded_Title"
-            Text="Navigation Item 2"
+            Text="심화 연습 페이지 구현"
             Style="{StaticResource PageTitleStyle}" />
 
         <Grid 
             Grid.Row="1" 
             Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
-            <!--The SystemControlPageBackgroundChromeLowBrush background represents where you should place your content. 
-                Place your content here.-->
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.4*"/>
+                <RowDefinition Height="0.3*"/>
+                <RowDefinition Height="0.3*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" VerticalAlignment="Center">
+                <Button x:Name="StartStopButton" Content="시작" FontSize="30" Margin="10"
+                        Click="ButtonBase_OnClick"/>
+                <TextBlock Text="아래 내용에 해당하는 영어 발음을 하세요" Margin="10"/>
+                <TextBlock x:Name="ShowTextBlock" Margin="10"/>
+                <TextBlock x:Name="WaitTextBlock" Text="대기 중" Margin="10" Visibility="Collapsed"/>
+                <TextBlock Text="SpeechRecognizer 상태" Margin="10"/>
+                <TextBlock x:Name="SpeechRecognizerState" Margin="10"/>
+            </StackPanel>
+            <StackPanel Grid.Row="1" VerticalAlignment="Center">
+                <TextBlock Text="발음 결과" Margin="10"/>
+                <TextBlock x:Name="ResultTextBlock" Margin="10"/>
+            </StackPanel>
+            <StackPanel Grid.Row="2" VerticalAlignment="Center">
+                <TextBlock Text="발음 결과 상세" Margin="10"/>
+                <TextBlock x:Name="ResultDetailTextBlock" Margin="10"/>
+            </StackPanel>
         </Grid>
+
         <!--  Adaptive triggers  -->
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="WindowStates">
