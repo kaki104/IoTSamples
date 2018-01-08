@@ -8,14 +8,12 @@ using Windows.ApplicationModel.Resources.Core;
 using Windows.Foundation;
 using Windows.Globalization;
 using Windows.Media.SpeechRecognition;
-using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using EnglishPractice.Helpers;
 using EnglishPractice.Models;
-using ResourceManager = System.Resources.ResourceManager;
 
 namespace EnglishPractice.Views
 {
@@ -33,14 +31,10 @@ namespace EnglishPractice.Views
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            //네비게이트
+            //마이크로 폰 권한 체크
             bool permissionGained = await AudioCapturePermissions.RequestMicrophonePermission();
             if (permissionGained)
             {
-                // Enable the recognition buttons.
-                //btnRecognizeWithUI.IsEnabled = true;
-                //btnRecognizeWithoutUI.IsEnabled = true;
-
                 var speechLanguage = SpeechRecognizer.SystemSpeechLanguage;
                 var langTag = speechLanguage.LanguageTag;
                 var speechContext = ResourceContext.GetForCurrentView();
@@ -54,41 +48,34 @@ namespace EnglishPractice.Views
                 }
                 await InitializeRecognizerAsync(enUS);
             }
-            else
-            {
-                //resultTextBlock.Visibility = Visibility.Visible;
-                //resultTextBlock.Text = "Permission to access capture resources was not given by the user; please set the application setting in Settings->Privacy->Microphone.";
-                //btnRecognizeWithUI.IsEnabled = false;
-                //btnRecognizeWithoutUI.IsEnabled = false;
-                //cbLanguageSelection.IsEnabled = false;
-            }
         }
 
-
-        private void PopulateLanguageDropdown()
-
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            // disable the callback so we don't accidentally trigger initialization of the recognizer
-            // while initialization is already in progress.
-            //isPopulatingLanguages = true;
-            var defaultLanguage = SpeechRecognizer.SystemSpeechLanguage;
-            var supportedLanguages = SpeechRecognizer.SupportedGrammarLanguages;
+            Cleanup();
+        }
 
-            //isPopulatingLanguages = false;
+        private void Cleanup()
+        {
+            if (_speechRecognizer == null) return;
+
+            if (_speechRecognizer.State != Windows.Media.SpeechRecognition.SpeechRecognizerState.Idle)
+            {
+                if (_recognitionOperation != null)
+                {
+                    _recognitionOperation.Cancel();
+                    _recognitionOperation = null;
+                }
+            }
+            // cleanup prior to re-initializing this scenario.
+            _speechRecognizer.StateChanged -= _speechRecognizer_StateChanged;
+            _speechRecognizer.Dispose();
+            _speechRecognizer = null;
         }
 
         private async Task InitializeRecognizerAsync(Language recognizerLanguage)
-
         {
-
-            if (_speechRecognizer != null)
-            {
-
-                // cleanup prior to re-initializing this scenario.
-                _speechRecognizer.StateChanged -= _speechRecognizer_StateChanged;
-                _speechRecognizer.Dispose();
-                _speechRecognizer = null;
-            }
+            Cleanup();
 
             try
             {
@@ -100,6 +87,7 @@ namespace EnglishPractice.Views
 
                 var shell = (ShellPage) Window.Current.Content;
                 _caseList = shell.CaseList;
+
                 foreach (var @case in _caseList)
                 {
                     _speechRecognizer.Constraints.Add(
@@ -116,31 +104,14 @@ namespace EnglishPractice.Views
                 // Check to make sure that the constraints were in a proper format and the recognizer was able to compile it.
                 if (compilationResult.Status != SpeechRecognitionResultStatus.Success)
                 {
-                    //// Disable the recognition buttons.
-                    //btnRecognizeWithUI.IsEnabled = false;
-                    //btnRecognizeWithoutUI.IsEnabled = false;
-
-                    //// Let the user know that the grammar didn't compile properly.
-                    //resultTextBlock.Visibility = Visibility.Visible;
-                    //resultTextBlock.Text = "Unable to compile grammar.";
-                }
-                else
-                {
-                    //btnRecognizeWithUI.IsEnabled = true;
-                    //btnRecognizeWithoutUI.IsEnabled = true;
-
-                    //resultTextBlock.Visibility = Visibility.Collapsed;
+                    await CommonHelper.ShowMessageAsync("Error SpeechRecognizer.CompileConstraints");
                 }
             }
             catch (Exception ex)
             {
                 if ((uint)ex.HResult == ShellPage.HResultRecognizerNotFound)
                 {
-                    //btnRecognizeWithUI.IsEnabled = false;
-                    //btnRecognizeWithoutUI.IsEnabled = false;
-
-                    //resultTextBlock.Visibility = Visibility.Visible;
-                    //resultTextBlock.Text = "Speech Language pack for selected language not installed.";
+                    await CommonHelper.ShowMessageAsync("Speech Language pack for selected language not installed.");
                 }
                 else
                 {
@@ -160,6 +131,8 @@ namespace EnglishPractice.Views
             });
         }
 
+        #region PropertyChanged
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void Set<T>(ref T storage, T value, [CallerMemberName]string propertyName = null)
@@ -175,6 +148,7 @@ namespace EnglishPractice.Views
 
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
+        #endregion
 
         private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {

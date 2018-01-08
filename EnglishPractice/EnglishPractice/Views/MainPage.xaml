@@ -39,8 +39,7 @@
 
         <TextBlock
             x:Name="TitlePage"
-            x:Uid="Main_Title"
-            Text="Navigation Item 2"
+            Text="기본 연습 페이지"
             Style="{StaticResource PageTitleStyle}" />
 
         <Grid 
