@@ -1,51 +1,83 @@
-﻿<Page
-    x:Class="EnglishPractice2.Views.MainPage"
+﻿<cu:Page
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Style="{StaticResource PageStyle}"
-    DataContext="{Binding MainViewModel, Source={StaticResource Locator}}"
-    xmlns:fcu ="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract,5)"
-    xmlns:cu ="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractNotPresent(Windows.Foundation.UniversalApiContract,5)"
+    xmlns:fcu ="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:cu ="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:behaviors="using:EnglishPractice2.Behaviors"
+    x:Class="EnglishPractice2.Views.MainPage"
+    Style="{cu:StaticResource PageStyle}"
+    DataContext="{cu:Binding MainViewModel, Source={cu:StaticResource Locator}}"
     mc:Ignorable="d">
-    <Grid
+    <cu:Grid
         x:Name="ContentArea"
-        Margin="{StaticResource MediumLeftRightMargin}">
+        Margin="{cu:StaticResource MediumLeftRightMargin}">
 
-        <Grid.RowDefinitions>
-            <RowDefinition x:Name="TitleRow" Height="48"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+        <cu:Grid.RowDefinitions>
+            <cu:RowDefinition x:Name="TitleRow" Height="48"/>
+            <cu:RowDefinition Height="*"/>
+        </cu:Grid.RowDefinitions>
 
-        <TextBlock
-            x:Name="TitlePage"
-            x:Uid="Main_Title"
-            Style="{StaticResource PageTitleStyle}" />
-
-        <Grid 
-            Grid.Row="1" 
-            Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
-            <!--The SystemControlPageBackgroundChromeLowBrush background represents where you should place your content. 
-                Place your content here.-->
-        </Grid>
         <!--  Adaptive triggers  -->
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="WindowStates">
-                <VisualState x:Name="WideState">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="640"/>
-                    </VisualState.StateTriggers>
-                </VisualState>
-                <VisualState x:Name="NarrowState">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="0"/>
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="TitlePage.Margin" cu:Value="48,0,12,7" fcu:Value="0,0,12,7"/>
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
-    </Grid>
-</Page>
+        <cu:VisualStateManager.VisualStateGroups>
+            <cu:VisualStateGroup x:Name="WindowStates">
+                <cu:VisualState x:Name="WideState">
+                    <cu:VisualState.StateTriggers>
+                        <cu:AdaptiveTrigger MinWindowWidth="640"/>
+                    </cu:VisualState.StateTriggers>
+                </cu:VisualState>
+                <cu:VisualState x:Name="NarrowState">
+                    <cu:VisualState.StateTriggers>
+                        <cu:AdaptiveTrigger MinWindowWidth="0"/>
+                    </cu:VisualState.StateTriggers>
+                    <cu:VisualState.Setters>
+                        <cu:Setter Target="TitlePage.Margin" Value="48,0,12,7"/>
+                    </cu:VisualState.Setters>
+                </cu:VisualState>
+            </cu:VisualStateGroup>
+        </cu:VisualStateManager.VisualStateGroups>
+
+        <cu:TextBlock
+            x:Name="TitlePage"
+            Text="단문 연습 페이지 V2"
+            Style="{cu:StaticResource PageTitleStyle}" />
+
+        <cu:Grid 
+            cu:Grid.Row="1" 
+            Background="{cu:ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+
+
+            <cu:Grid.RowDefinitions>
+                <cu:RowDefinition Height="Auto"/>
+                <cu:RowDefinition Height="1*"/>
+            </cu:Grid.RowDefinitions>
+
+            <cu:StackPanel Orientation="Horizontal" cu:Grid.Row="0" Margin="20">
+                <cu:Button Content="시작" FontSize="50" Width="200"
+                        Command="{cu:Binding StartCommand}"/>
+                <cu:Button Content="종료" FontSize="50" Width="200" Visibility="Collapsed"
+                        Command="{cu:Binding StopCommand}"/>
+            </cu:StackPanel>
+
+            <cu:StackPanel cu:Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <!--ShowText-->
+                <cu:TextBlock Text="{cu:Binding ShowText}" FontSize="50" Margin="10"/>
+                <!--Result-->
+                <cu:TextBlock Text="{cu:Binding Result}" FontSize="40" Margin="10"/>
+            </cu:StackPanel>
+        </cu:Grid>
+
+        <cu:MediaElement x:Name="MediaElement" cu:Grid.Row="0" RealTimePlayback="True">
+            <interactivity:Interaction.Behaviors>
+                <core:EventTriggerBehavior EventName="MediaEnded">
+                    <core:InvokeCommandAction Command="{cu:Binding MediaEndedCommand}"/>
+                </core:EventTriggerBehavior>
+                <behaviors:MediaBehavior Stream="{Binding SpeechSynthesisStream}"/>
+            </interactivity:Interaction.Behaviors>
+        </cu:MediaElement>
+    </cu:Grid>
+</cu:Page>
+
