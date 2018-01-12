@@ -135,11 +135,24 @@ namespace EnglishPractice2.ViewModels
         {
             NavigationService.Navigated += NavigationService_Navigated;
 
-            StartCommand = new RelayCommand(SelectSentence);
-            StopCommand = new RelayCommand(() => HasStart = false,
+            StartCommand = new RelayCommand(() =>
+            {
+                HasStart = true;
+                SelectSentence();
+            });
+
+            StopCommand = new RelayCommand(() =>
+                {
+                    HasStart = false;
+                    _recognitionOperation?.Cancel();
+                },
                 () => _speechRecognizer.State == SpeechRecognizerState.Idle);
+
             MediaEndedCommand = new RelayCommand(
-                async () => await StartSpeechRecognizeAsync());
+                async () =>
+                {
+                    if(HasStart) await StartSpeechRecognizeAsync();
+                });
         }
 
         /// <summary>
@@ -159,12 +172,12 @@ namespace EnglishPractice2.ViewModels
                     && speechRecognitionResult.Text == _currentSentence.SpeakText)
                 {
                     Result = "성공";
-                    SelectSentence();
+                    if(HasStart) SelectSentence();
                 }
                 else
                 {
                     Result = "Discarded due to low/rejected Confidence: " + speechRecognitionResult.Text;
-                    await CreateSynthesisStreamAsync(_currentSentence.SpeakText, false);
+                    if(HasStart) await CreateSynthesisStreamAsync(_currentSentence.SpeakText, false);
                 }
             }
             else

@@ -8,10 +8,26 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:behaviors="using:EnglishPractice2.Behaviors"
+    xmlns:Converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
     x:Class="EnglishPractice2.Views.MainPage"
-    Style="{cu:StaticResource PageStyle}"
-    DataContext="{cu:Binding MainViewModel, Source={cu:StaticResource Locator}}"
     mc:Ignorable="d">
+    <cu:Page.Resources>
+        <Converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <Converters:BoolToVisibilityConverter x:Key="BoolToVisibilityRevConverter">
+            <Converters:BoolToVisibilityConverter.FalseValue>
+                <cu:Visibility>Visible</cu:Visibility>
+            </Converters:BoolToVisibilityConverter.FalseValue>
+            <Converters:BoolToVisibilityConverter.TrueValue>
+                <cu:Visibility>Collapsed</cu:Visibility>
+            </Converters:BoolToVisibilityConverter.TrueValue>
+        </Converters:BoolToVisibilityConverter>
+    </cu:Page.Resources>
+    <cu:Page.Style>
+        <cu:StaticResource ResourceKey="PageStyle"/>
+    </cu:Page.Style>
+    <cu:Page.DataContext>
+        <cu:Binding Path="MainViewModel" Source="{cu:StaticResource Locator}"/>
+    </cu:Page.DataContext>
     <cu:Grid
         x:Name="ContentArea"
         Margin="{cu:StaticResource MediumLeftRightMargin}">
@@ -57,9 +73,11 @@
 
             <cu:StackPanel Orientation="Horizontal" cu:Grid.Row="0" Margin="20">
                 <cu:Button Content="시작" FontSize="50" Width="200"
-                        Command="{cu:Binding StartCommand}"/>
-                <cu:Button Content="종료" FontSize="50" Width="200" Visibility="Collapsed"
-                        Command="{cu:Binding StopCommand}"/>
+                        Command="{cu:Binding StartCommand}"
+                        Visibility="{cu:Binding HasStart, Converter={cu:StaticResource BoolToVisibilityRevConverter}}"/>
+                <cu:Button Content="종료" FontSize="50" Width="200" 
+                        Command="{cu:Binding StopCommand}"
+                        Visibility="{cu:Binding HasStart, Converter={cu:StaticResource BoolToVisibilityConverter}}"/>
             </cu:StackPanel>
 
             <cu:StackPanel cu:Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -75,7 +93,7 @@
                 <core:EventTriggerBehavior EventName="MediaEnded">
                     <core:InvokeCommandAction Command="{cu:Binding MediaEndedCommand}"/>
                 </core:EventTriggerBehavior>
-                <behaviors:MediaBehavior Stream="{Binding SpeechSynthesisStream}"/>
+                <behaviors:MediaBehavior Stream="{cu:Binding SpeechSynthesisStream}"/>
             </interactivity:Interaction.Behaviors>
         </cu:MediaElement>
     </cu:Grid>
