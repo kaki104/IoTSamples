@@ -40,10 +40,18 @@ namespace EnglishPractice2.Behaviors
 
         protected override void OnAttached()
         {
+            AssociatedObject.MediaEnded += AssociatedObject_MediaEnded            ;
+        }
+
+        private void AssociatedObject_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            AssociatedObject.AutoPlay = false;
+            AssociatedObject.Stop();
         }
 
         protected override void OnDetaching()
         {
+            AssociatedObject.MediaEnded -= AssociatedObject_MediaEnded;
         }
     }
 }
