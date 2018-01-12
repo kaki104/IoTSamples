@@ -1,15 +1,24 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.Foundation;
+using Windows.Globalization;
 using Windows.Media.Core;
 using Windows.Media.Playback;
+using Windows.Media.SpeechRecognition;
 using Windows.Media.SpeechSynthesis;
+using Windows.UI.Core;
+using Windows.UI.Xaml;
 using EnglishPractice2.Helpers;
 using EnglishPractice2.Models;
 using EnglishPractice2.Services;
+using EnglishPractice2.Views;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Threading;
 using GalaSoft.MvvmLight.Views;
 
 namespace EnglishPractice2.ViewModels
@@ -35,10 +44,15 @@ namespace EnglishPractice2.ViewModels
         /// TTS용 신디사이져
         /// </summary>
         private SpeechSynthesizer _synthesizer;
+        /// <summary>
+        /// 음성 인식
+        /// </summary>
+        private SpeechRecognizer _speechRecognizer;
 
         private VoiceInformation _englishVoice;
         private MediaPlaybackItem _mediaPlaybackItem;
         private SpeechSynthesisStream _speechSynthesisStream;
+        private IAsyncOperation<SpeechRecognitionResult> _recognitionOperation;
 
         /// <summary>
         /// 기본 생성자
@@ -74,10 +88,38 @@ namespace EnglishPractice2.ViewModels
             {
 
             });
-            MediaEndedCommand = new RelayCommand(() =>
-            {
+            MediaEndedCommand = new RelayCommand(MediaEndedCommandExecute);
+        }
+        /// <summary>
+        /// 음성 출력 종료
+        /// </summary>
+        private async void MediaEndedCommandExecute()
+        {
+            //음성 입력 대기
+            _recognitionOperation = _speechRecognizer.RecognizeWithUIAsync();
+            var speechRecognitionResult = await _recognitionOperation;
 
-            });
+            // If successful, display the recognition result. A cancelled task should do nothing.
+            if (speechRecognitionResult.Status == SpeechRecognitionResultStatus.Success)
+            {
+                if (speechRecognitionResult.Confidence == SpeechRecognitionConfidence.Medium ||
+                    speechRecognitionResult.Confidence == SpeechRecognitionConfidence.High
+                    && speechRecognitionResult.Text == _currentSentence.SpeakText)
+                {
+                    Result = "성공";
+                }
+                else
+                {
+                    Result = "Discarded due to low/rejected Confidence: " + speechRecognitionResult.Text;
+                }
+            }
+            else
+            {
+                Result = string.Format("Speech Recognition Failed, Status: {0}",
+                        speechRecognitionResult.Status.ToString());
+            }
+
+
         }
 
         /// <summary>
@@ -85,7 +127,7 @@ namespace EnglishPractice2.ViewModels
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void NavigationService_Navigated(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
+        private async void NavigationService_Navigated(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
         {
             //랜덤 초기화
             _random = new Random();
@@ -100,7 +142,73 @@ namespace EnglishPractice2.ViewModels
 
             _englishVoice = voices.FirstOrDefault(p => p.Language == "en-US"
                                                       && p.Gender == VoiceGender.Female);
+
+            var supportedLanguages = SpeechRecognizer.SupportedGrammarLanguages;
+            var enUS = supportedLanguages.FirstOrDefault(p => p.LanguageTag == "en-US")
+                       ?? SpeechRecognizer.SystemSpeechLanguage;
+
+            await InitializeRecognizerAsync(enUS);
+
         }
+
+        /// <summary>
+        /// 음성 인식 초기화
+        /// </summary>
+        /// <param name="recognizerLanguage"></param>
+        /// <returns></returns>
+        private async Task InitializeRecognizerAsync(Language recognizerLanguage)
+        {
+            Cleanup();
+
+            try
+            {
+                // Create an instance of SpeechRecognizer.
+                _speechRecognizer = new SpeechRecognizer(recognizerLanguage);
+
+                // Provide feedback to the user about the state of the recognizer.
+                _speechRecognizer.StateChanged += _speechRecognizer_StateChanged;
+
+                var sentenceList = Singleton<SentenceHelper>.Instance.SentenceList;
+                foreach (var sentence in sentenceList)
+                {
+                    _speechRecognizer.Constraints.Add(
+                        new SpeechRecognitionListConstraint(
+                            new[] { sentence.SpeakText }, sentence.ShowText));
+                }
+
+                // RecognizeWithUIAsync allows developers to customize the prompts.
+                _speechRecognizer.UIOptions.ExampleText = "drink coffee";
+                _speechRecognizer.UIOptions.ShowConfirmation = false;
+
+                // Compile the constraint.
+                var compilationResult = await _speechRecognizer.CompileConstraintsAsync();
+
+                // Check to make sure that the constraints were in a proper format and the recognizer was able to compile it.
+                if (compilationResult.Status != SpeechRecognitionResultStatus.Success)
+                {
+                    await CommonHelper.ShowMessageAsync("Error SpeechRecognizer.CompileConstraints");
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                if ((uint)ex.HResult == CommonHelper.HResultRecognizerNotFound)
+                {
+                    await CommonHelper.ShowMessageAsync("Speech Language pack for selected language not installed.");
+                }
+                else
+                {
+                    await CommonHelper.ShowMessageAsync(ex.Message, "Exception");
+                }
+
+            }
+        }
+
+        private void _speechRecognizer_StateChanged(SpeechRecognizer sender, SpeechRecognizerStateChangedEventArgs args)
+        {
+            Debug.WriteLine("Speech recognizer state: " + args.State);
+        }
+
 
         /// <summary>
         /// 미디어 플레이백 아이템
@@ -170,6 +278,15 @@ namespace EnglishPractice2.ViewModels
         {
             get { return _result; }
             set { Set(ref _result ,value); }
+        }
+
+        public override void Cleanup()
+        {
+            if (_speechRecognizer == null) return;
+            // cleanup prior to re-initializing this scenario.
+            _speechRecognizer.StateChanged -= _speechRecognizer_StateChanged;
+            _speechRecognizer.Dispose();
+            _speechRecognizer = null;
         }
     }
 }

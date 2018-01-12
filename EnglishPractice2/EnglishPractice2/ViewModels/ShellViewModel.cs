@@ -2,7 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-
+using Windows.ApplicationModel.Resources.Core;
+using Windows.Media.SpeechRecognition;
 using EnglishPractice2.Helpers;
 using EnglishPractice2.Services;
 using EnglishPractice2.Views;
@@ -189,7 +190,7 @@ namespace EnglishPractice2.ViewModels
             Navigate(args.InvokedItem);
         }
 
-        private void Frame_Navigated(object sender, NavigationEventArgs e)
+        private async void Frame_Navigated(object sender, NavigationEventArgs e)
         {
             if (e != null)
             {
@@ -208,6 +209,17 @@ namespace EnglishPractice2.ViewModels
 
                 //Sentence 초기화
                 var init = Singleton<SentenceHelper>.Instance;
+
+                //마이크로 폰 권한 체크
+                bool permissionGained = await AudioCapturePermissions.RequestMicrophonePermission();
+                if (permissionGained)
+                {
+                    var speechLanguage = SpeechRecognizer.SystemSpeechLanguage;
+                    var langTag = speechLanguage.LanguageTag;
+                    var speechContext = ResourceContext.GetForCurrentView();
+                    speechContext.Languages = new[] { langTag };
+                }
+
             }
         }
 
