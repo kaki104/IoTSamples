@@ -21,5 +21,17 @@ namespace EnglishPractice2.Helpers
         /// See Settings -> Time & Language -> Region & Language -> *Language* -> Options -> Speech Language Options.
         /// </summary>
         public static uint HResultRecognizerNotFound = 0x8004503a;
+
+        /// <summary>
+        /// ShowMessageAsync
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="title"></param>
+        /// <returns></returns>
+        public static async Task ShowMessageAsync(string message, string title = "Information")
+        {
+            var messageDialog = new Windows.UI.Popups.MessageDialog(message, title);
+            await messageDialog.ShowAsync();
+        }
     }
 }
