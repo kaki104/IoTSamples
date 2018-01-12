@@ -1,5 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Input;
+using Windows.Media.Core;
+using Windows.Media.Playback;
+using Windows.Media.SpeechSynthesis;
+using EnglishPractice2.Helpers;
+using EnglishPractice2.Models;
 using EnglishPractice2.Services;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -21,8 +27,19 @@ namespace EnglishPractice2.ViewModels
         /// 난수 생성용
         /// </summary>
         private Random _random;
+        /// <summary>
+        /// 현재 작업 중인 단문
+        /// </summary>
+        private Sentence _currentSentence;
+        /// <summary>
+        /// TTS용 신디사이져
+        /// </summary>
+        private SpeechSynthesizer _synthesizer;
 
-           
+        private VoiceInformation _englishVoice;
+        private MediaPlaybackItem _mediaPlaybackItem;
+        private SpeechSynthesisStream _speechSynthesisStream;
+
         /// <summary>
         /// 기본 생성자
         /// </summary>
@@ -72,15 +89,57 @@ namespace EnglishPractice2.ViewModels
         {
             //랜덤 초기화
             _random = new Random();
-            
+            //신디사이져 초기화
+            _synthesizer = new SpeechSynthesizer();
+
+            // Get all of the installed voices.
+            var voices = SpeechSynthesizer.AllVoices;
+            var voice = voices.FirstOrDefault(p => p.Language == "ko-KR");
+            _synthesizer.Voice = voice
+                                 ?? throw new NullReferenceException("한국어 음성을 찾을 수 없습니다.");
+
+            _englishVoice = voices.FirstOrDefault(p => p.Language == "en-US"
+                                                      && p.Gender == VoiceGender.Female);
+        }
+
+        /// <summary>
+        /// 미디어 플레이백 아이템
+        /// </summary>
+        public MediaPlaybackItem MediaPlaybackItem
+        {
+            get { return _mediaPlaybackItem; }
+            set { Set(ref _mediaPlaybackItem ,value); }
+        }
+        /// <summary>
+        /// 스피치 신디사이져 스트림
+        /// </summary>
+        public SpeechSynthesisStream SpeechSynthesisStream
+        {
+            get { return _speechSynthesisStream; }
+            set { Set(ref _speechSynthesisStream ,value); }
         }
 
         /// <summary>
         /// 시작 버튼 클릭시 실행할 메소드
         /// </summary>
-        private void StartCommandExecute()
+        private async void StartCommandExecute()
         {
             //출력할 단문 하나 랜덤 선택
+            var sentenceList = Singleton<SentenceHelper>.Instance.SentenceList;
+            var randomIndex = _random.Next(sentenceList.Count);
+            _currentSentence = sentenceList[randomIndex];
+
+            //화면에 한글 출력 후 보이스 출력
+            ShowText = _currentSentence.ShowText;
+            //음성 스트림 생성
+            SpeechSynthesisStream = await _synthesizer
+                .SynthesizeTextToStreamAsync(_currentSentence.ShowText);
+
+            ////미디어 소스로 만들기
+            //var mediaSource = MediaSource.CreateFromStream(stream, stream.ContentType);
+            ////미디어 플레이백 아이템
+            //MediaPlaybackItem = new MediaPlaybackItem(mediaSource);
+            ////음성 출력~~
         }
 
         /// <summary>

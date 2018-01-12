@@ -7,6 +7,7 @@
     xmlns:cu ="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:behaviors="using:EnglishPractice2.Behaviors"
     x:Class="EnglishPractice2.Views.MainPage"
     Style="{cu:StaticResource PageStyle}"
     DataContext="{cu:Binding MainViewModel, Source={cu:StaticResource Locator}}"
@@ -69,11 +70,12 @@
             </cu:StackPanel>
         </cu:Grid>
 
-        <cu:MediaElement x:Name="MediaElement" cu:Grid.Row="0">
+        <cu:MediaElement x:Name="MediaElement" cu:Grid.Row="0" RealTimePlayback="True">
             <interactivity:Interaction.Behaviors>
                 <core:EventTriggerBehavior EventName="MediaEnded">
-                    <core:InvokeCommandAction Command="{Binding MediaEndedCommand}"/>
+                    <core:InvokeCommandAction Command="{cu:Binding MediaEndedCommand}"/>
                 </core:EventTriggerBehavior>
+                <behaviors:MediaBehavior Stream="{Binding SpeechSynthesisStream}"/>
             </interactivity:Interaction.Behaviors>
         </cu:MediaElement>
     </cu:Grid>

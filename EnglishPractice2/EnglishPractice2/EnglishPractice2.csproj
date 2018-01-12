@@ -111,6 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activation\ActivationHandler.cs" />
+    <Compile Include="Behaviors\MediaBehavior.cs" />
     <Compile Include="Helpers\CommonHelper.cs" />
     <Compile Include="Helpers\SentenceHelper.cs" />
     <Compile Include="Models\Sentence.cs" />
