@@ -205,6 +205,9 @@ namespace EnglishPractice2.ViewModels
                     ChangeSelected(_lastSelectedItem, navigationItem);
                     _lastSelectedItem = navigationItem;
                 }
+
+                //Sentence 초기화
+                var init = Singleton<SentenceHelper>.Instance;
             }
         }
 
