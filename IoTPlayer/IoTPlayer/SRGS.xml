@@ -23,7 +23,7 @@
         <tag> out.ACTION="NEXT"; </tag>
       </item>
       <item>
-        <ruleref uri="#previewAction"/>
+        <ruleref uri="#previousAction"/>
         <tag> out.ACTION="PREVIEW"; </tag>
       </item>
     </one-of>
@@ -78,9 +78,9 @@
     </one-of>
   </rule>
 
-  <rule id="previewAction">
+  <rule id="previousAction">
     <one-of>
-      <item> preview </item>
+      <item> previous </item>
     </one-of>
   </rule>
 
