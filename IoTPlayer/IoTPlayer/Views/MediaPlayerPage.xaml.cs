@@ -25,6 +25,7 @@ namespace IoTPlayer.Views
         public MediaPlayerPage()
         {
             InitializeComponent();
+            
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
