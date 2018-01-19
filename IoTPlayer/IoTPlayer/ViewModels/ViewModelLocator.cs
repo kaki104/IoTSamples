@@ -17,13 +17,10 @@ namespace IoTPlayer.ViewModels
 
             SimpleIoc.Default.Register(() => new NavigationServiceEx());
             SimpleIoc.Default.Register<ShellViewModel>();
-            Register<MainViewModel, MainPage>();
             Register<MediaPlayerViewModel, MediaPlayerPage>();
         }
 
         public MediaPlayerViewModel MediaPlayerViewModel => ServiceLocator.Current.GetInstance<MediaPlayerViewModel>();
-
-        public MainViewModel MainViewModel => ServiceLocator.Current.GetInstance<MainViewModel>();
 
         public ShellViewModel ShellViewModel => ServiceLocator.Current.GetInstance<ShellViewModel>();
 
