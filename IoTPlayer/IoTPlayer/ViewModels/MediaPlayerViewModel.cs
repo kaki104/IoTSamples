@@ -46,6 +46,9 @@ namespace IoTPlayer.ViewModels
         }
 
         private string _posterSource;
+        private string _title;
+        private string _album;
+        private string _artist;
 
         public string PosterSource
         {
@@ -61,10 +64,39 @@ namespace IoTPlayer.ViewModels
 
             Init();
         }
-
+        /// <summary>
+        /// 네비게이션 서비스
+        /// </summary>
         public NavigationServiceEx Navigation
             => SimpleIoc.Default.GetInstance<NavigationServiceEx>();
 
+        /// <summary>
+        /// 곡 제목
+        /// </summary>
+        public string Title
+        {
+            get { return _title; }
+            set { Set(ref _title ,value); }
+        }
+        /// <summary>
+        /// 앨범 
+        /// </summary>
+        public string Album
+        {
+            get { return _album; }
+            set { Set(ref _album ,value); }
+        }
+        /// <summary>
+        /// 아티스트
+        /// </summary>
+        public string Artist
+        {
+            get { return _artist; }
+            set { Set(ref _artist ,value); }
+        }
+        /// <summary>
+        /// 초기화
+        /// </summary>
         private void Init()
         {
             Navigation.Navigated += Navigation_Navigated            ;

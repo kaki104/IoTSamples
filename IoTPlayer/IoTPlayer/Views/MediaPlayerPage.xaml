@@ -11,11 +11,20 @@
         <MediaPlayerElement x:Name="mpe"
                             AutoPlay="True"
                             AreTransportControlsEnabled="True"
-                            PosterSource="{x:Bind ViewModel.PosterSource, Mode=OneWay}"
-                            Source="{x:Bind ViewModel.Source, Mode=OneWay}" >
+                            PosterSource="{Binding PosterSource, Mode=OneWay}"
+                            Source="{Binding Source, Mode=OneWay}" >
             <MediaPlayerElement.TransportControls>
-                <MediaTransportControls IsCompact="False"/>
+                <MediaTransportControls IsCompact="False"
+                                        IsStopEnabled="True" IsStopButtonVisible="True"
+                                        IsPreviousTrackButtonVisible="True"
+                                        IsNextTrackButtonVisible="True" IsPlaybackRateEnabled="True"/>
             </MediaPlayerElement.TransportControls>
         </MediaPlayerElement>
+
+        <StackPanel VerticalAlignment="Top" Margin="20">
+            <TextBlock Text="{Binding Title}" Style="{StaticResource PageTitleStyle}"/>
+            <TextBlock Text="{Binding Album}" Style="{StaticResource BodyTextStyle}"/>
+            <TextBlock Text="{Binding Artist}"  Style="{StaticResource BodyTextStyle}"/>
+        </StackPanel>
     </Grid>
 </Page>
