@@ -4,6 +4,7 @@ using IoTPlayer.Services;
 
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
+using GalaSoft.MvvmLight.Threading;
 
 namespace IoTPlayer
 {
@@ -39,11 +40,13 @@ namespace IoTPlayer
 
         private ActivationService CreateActivationService()
         {
-            return new ActivationService(this, typeof(ViewModels.MainViewModel), new Lazy<UIElement>(CreateShell));
+            return new ActivationService(this, typeof(ViewModels.MediaPlayerViewModel), new Lazy<UIElement>(CreateShell));
         }
 
         private UIElement CreateShell()
         {
+            //디스페처 핼퍼 초기화
+            DispatcherHelper.Initialize();
             return new Views.ShellPage();
         }
     }

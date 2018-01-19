@@ -149,6 +149,17 @@ namespace IoTPlayer.ViewModels
             PopulateNavItems();
 
             InitializeState(Window.Current.Bounds.Width);
+
+            //외장 디스크 연결 확인
+            //todo : 이미 선택되어 있는 외장 폴더가 존재하는 경우에 확인하는 코드
+            //todo : 일단 Music 라이브러리에 있는 파일을 읽어서 출력하는 코드 작성
+
+            //Speech Recognition 초기화
+
+            //SRGS 초기화
+
+            //MediaPlayerElement 초기화
+
         }
 
         private void InitializeState(double windowWith)
@@ -176,7 +187,6 @@ namespace IoTPlayer.ViewModels
             // More on Segoe UI Symbol icons: https://docs.microsoft.com/windows/uwp/style/segoe-ui-symbol-font
             // Or to use an IconElement instead of a Symbol see https://github.com/Microsoft/WindowsTemplateStudio/blob/master/docs/projectTypes/navigationpane.md
             // Edit String/en-US/Resources.resw: Add a menu item title for each page
-            _primaryItems.Add(new ShellNavigationItem("Shell_Main".GetLocalized(), Symbol.Document, typeof(MainViewModel).FullName));
             _primaryItems.Add(new ShellNavigationItem("Shell_MediaPlayer".GetLocalized(), Symbol.Document, typeof(MediaPlayerViewModel).FullName));
         }
 
