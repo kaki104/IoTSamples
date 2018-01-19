@@ -172,11 +172,18 @@ namespace IoTPlayer.ViewModels
             var action = args.Result.SemanticInterpretation.Properties.FirstOrDefault(p => p.Key == "ACTION");
             if (string.IsNullOrEmpty(action.Key)) return;
 
+            var filter = args.Result.SemanticInterpretation.Properties.FirstOrDefault(p => p.Key == "FILTER");
+            if (string.IsNullOrEmpty(filter.Key) == false)
+            {
+
+            }
+
             var command = action.Value.FirstOrDefault();
+            Action executeAction = null;
             switch (command)
             {
-                case "begin playback":
-                    await DispatcherHelper.RunAsync(async () =>
+                case "BEGIN":
+                    executeAction = async () =>
                     {
                         var resunt = await BeginPlaybackAsync();
                         if (resunt == false)
@@ -184,9 +191,37 @@ namespace IoTPlayer.ViewModels
                             //에러 메시지 출력?
                         }
 
-                    });
+                    };
+                    break;
+                case "PAUSE":
+                    executeAction = async () =>
+                    {
+                        await CommonHelper.ShowMessageAsync("PAUSE playback");
+                    };
+                    break;
+                case "STOP":
+                    executeAction = async () =>
+                    {
+                        await CommonHelper.ShowMessageAsync("STOP playback");
+                    };
+                    break;
+                case "NEXT":
+                    executeAction = async () =>
+                    {
+                        await CommonHelper.ShowMessageAsync("NEXT playback");
+                    };
+                    break;
+                case "PREVIEW":
+                    executeAction = async () =>
+                    {
+                        await CommonHelper.ShowMessageAsync("PREVIEW playback");
+                    };
                     break;
             }
+
+            if (executeAction == null) return;
+
+            await DispatcherHelper.RunAsync(executeAction);
         }
 
         private void ContinuousRecognitionSession_Completed(SpeechContinuousRecognitionSession sender, SpeechContinuousRecognitionCompletedEventArgs args)

@@ -1,16 +1,40 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 
-<grammar xml:lang="en-US" root="playCommand"
+<grammar xml:lang="en-US" root="voiceCommand"
            tag-format="semantics/1.0" version="1.0"
            xmlns="http://www.w3.org/2001/06/grammar">
 
-  <rule id="playCommand">
-    <ruleref uri="#playAction"/>
+  <rule id="voiceCommand">
+    <one-of>
+      <item>
+        <ruleref uri="#playAction"/>
+        <tag> out.ACTION="BEGIN"; </tag>
+      </item>
+      <item>
+        <ruleref uri="#pauseAction"/>
+        <tag> out.ACTION="PAUSE"; </tag>
+      </item>
+      <item>
+        <ruleref uri="#stopAction"/>
+        <tag> out.ACTION="STOP"; </tag>
+      </item>
+      <item>
+        <ruleref uri="#nextAction"/>
+        <tag> out.ACTION="NEXT"; </tag>
+      </item>
+      <item>
+        <ruleref uri="#previewAction"/>
+        <tag> out.ACTION="PREVIEW"; </tag>
+      </item>
+    </one-of>
+    <item repeat="0-1">
+      <ruleref uri="#selectFilter"/>
+      <tag> out.FILTER=rules.latest(); </tag>
+    </item>
     <item repeat="0-1"> the </item>
     <item repeat="0-1">
       <ruleref uri="#fileWords"/>
     </item>
-    <tag> out.ACTION="begin playback"; </tag>
   </rule>
 
   <rule id="playAction">
@@ -23,9 +47,50 @@
 
   <rule id="fileWords">
     <one-of>
+      <item> music </item>
       <item> song </item>
       <item> tune </item>
       <item> track </item>
+      <item> playback </item>
+    </one-of>
+  </rule>
+
+  <rule id="pauseAction">
+    <one-of>
+      <item> pause </item>
+      <item> suspend </item>
+      <item> wait </item>
+      <item> hold </item>
+    </one-of>
+  </rule>
+
+  <rule id="stopAction">
+    <one-of>
+      <item> stop </item>
+      <item> end </item>
+      <item> quit </item>
+    </one-of>
+  </rule>
+
+  <rule id="nextAction">
+    <one-of>
+      <item> next </item>
+    </one-of>
+  </rule>
+
+  <rule id="previewAction">
+    <one-of>
+      <item> preview </item>
+    </one-of>
+  </rule>
+
+  <rule id="selectFilter">
+    <one-of>
+      <item> favorite </item>
+      <item> exciting </item>
+      <item> dance </item>
+      <item> ballad </item>
+      <item> rap </item>
     </one-of>
   </rule>
 
