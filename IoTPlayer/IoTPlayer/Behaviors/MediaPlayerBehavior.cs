@@ -38,9 +38,26 @@ namespace IoTPlayer.Behaviors
             set { SetValue(SourceProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for Source.  This enables animation, styling, binding, etc...
+        /// <summary>
+        /// 미디어 소스
+        /// </summary>
         public static readonly DependencyProperty SourceProperty =
             DependencyProperty.Register("Source", typeof(IMediaPlaybackSource), typeof(MediaPlayerBehavior), new PropertyMetadata(null, SourceChanged));
+
+
+
+        public ICommand MediaCommand
+        {
+            get { return (ICommand)GetValue(MediaCommandProperty); }
+            set { SetValue(MediaCommandProperty, value); }
+        }
+
+        /// <summary>
+        /// 미디어 커맨드
+        /// </summary>
+        public static readonly DependencyProperty MediaCommandProperty =
+            DependencyProperty.Register("MediaCommand", typeof(ICommand), typeof(MediaPlayerBehavior), new PropertyMetadata(null));
+
 
         private static void SourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -104,16 +121,28 @@ namespace IoTPlayer.Behaviors
             });
         }
 
-        private void MediaPlayer_MediaOpened(Windows.Media.Playback.MediaPlayer sender, object args)
+        private async void MediaPlayer_MediaOpened(Windows.Media.Playback.MediaPlayer sender, object args)
         {
+            await AssociatedObject.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                MediaCommand?.Execute(ResultMediaPlayer.Opened);
+            });
         }
 
-        private void MediaPlayer_MediaFailed(Windows.Media.Playback.MediaPlayer sender, Windows.Media.Playback.MediaPlayerFailedEventArgs args)
+        private async void MediaPlayer_MediaFailed(Windows.Media.Playback.MediaPlayer sender, Windows.Media.Playback.MediaPlayerFailedEventArgs args)
         {
+            await AssociatedObject.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                MediaCommand?.Execute(ResultMediaPlayer.Failed);
+            });
         }
 
-        private void MediaPlayer_MediaEnded(Windows.Media.Playback.MediaPlayer sender, object args)
+        private async void MediaPlayer_MediaEnded(Windows.Media.Playback.MediaPlayer sender, object args)
         {
+            await AssociatedObject.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                MediaCommand?.Execute(ResultMediaPlayer.Ended);
+            });
         }
 
         protected override void OnDetaching()
