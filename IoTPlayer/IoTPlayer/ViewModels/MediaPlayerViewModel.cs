@@ -180,12 +180,31 @@ namespace IoTPlayer.ViewModels
         /// 음악 재생
         /// </summary>
         /// <returns></returns>
-        private async Task<bool> BeginPlaybackAsync()
+        private async Task<bool> SelectSourceAsync(int nextStep = 0)
         {
             if (_songList == null
                 || _songList.Any() == false) return false;
 
-            _currentSong = _songList.First();
+            int currentIndex;
+
+            switch (nextStep)
+            {
+                case 0:
+                    _currentSong = _songList.First();
+                    break;
+                case 1:     //next
+                    if (_currentSong == null) return false;
+                    currentIndex = _songList.ToList().IndexOf(_currentSong);
+                    currentIndex = _songList.Count - 1 == currentIndex ? 0 : currentIndex + 1;
+                    _currentSong = _songList[currentIndex];
+                    break;
+                case -1:    //previous
+                    if (_currentSong == null) return false;
+                    currentIndex = _songList.ToList().IndexOf(_currentSong);
+                    currentIndex = currentIndex == 0 ? _songList.Count - 1 : currentIndex - 1;
+                    _currentSong = _songList[currentIndex];
+                    break;
+            }
             var musicInfo = await _currentSong.Properties.GetMusicPropertiesAsync();
             Title = musicInfo.Title;
             Album = musicInfo.Album;
@@ -290,7 +309,7 @@ namespace IoTPlayer.ViewModels
                     {
                         if (Source == null)
                         {
-                            var resunt = await BeginPlaybackAsync();
+                            var resunt = await SelectSourceAsync();
                             if (resunt == false) return;
                         }
                         MessengerInstance.Send(CommandMediaPlayer.Play);
@@ -305,13 +324,17 @@ namespace IoTPlayer.ViewModels
                 case "NEXT":
                     executeAction = async () =>
                     {
-                        await CommonHelper.ShowMessageAsync("NEXT playback");
+                        MessengerInstance.Send(CommandMediaPlayer.Pause);
+                        await SelectSourceAsync(1);
+                        MessengerInstance.Send(CommandMediaPlayer.Play);
                     };
                     break;
-                case "PREVIEW":
+                case "PREVIOUS":
                     executeAction = async () =>
                     {
-                        await CommonHelper.ShowMessageAsync("PREVIEW playback");
+                        MessengerInstance.Send(CommandMediaPlayer.Pause);
+                        await SelectSourceAsync(-1);
+                        MessengerInstance.Send(CommandMediaPlayer.Play);
                     };
                     break;
             }

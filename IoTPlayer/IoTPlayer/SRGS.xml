@@ -20,7 +20,7 @@
       </item>
       <item>
         <ruleref uri="#previousAction"/>
-        <tag> out.ACTION="PREVIEW"; </tag>
+        <tag> out.ACTION="PREVIOUS"; </tag>
       </item>
     </one-of>
     <item repeat="0-1">

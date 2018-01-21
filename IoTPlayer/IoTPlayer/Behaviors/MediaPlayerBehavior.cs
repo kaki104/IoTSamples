@@ -88,6 +88,9 @@ namespace IoTPlayer.Behaviors
                     if (Source == null) return;
                     AssociatedObject.MediaPlayer.Pause();
                     break;
+                case CommandMediaPlayer.Previous:
+                case CommandMediaPlayer.Next:
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(command), command, null);
             }
