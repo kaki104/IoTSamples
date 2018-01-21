@@ -20,7 +20,8 @@
             <interactivity:Interaction.Behaviors>
                 <behaviors:MediaPlayerBehavior
                     Source="{Binding Source, Mode=OneWay}"
-                    CurrentPlaybackState="{Binding CurrentPlaybackState, Mode=TwoWay}"/>
+                    CurrentPlaybackState="{Binding CurrentPlaybackState, Mode=TwoWay}"
+                    MediaCommand="{Binding MediaCommand}"/>
             </interactivity:Interaction.Behaviors>
         </MediaPlayerElement>
 
@@ -28,10 +29,14 @@
             <TextBlock Text="{Binding Title}" Style="{StaticResource PageTitleStyle}"/>
             <TextBlock Text="{Binding Album}" Style="{StaticResource BodyTextStyle}"/>
             <TextBlock Text="{Binding Artist}"  Style="{StaticResource BodyTextStyle}"/>
+            <TextBlock Text="{Binding Genre}"  Style="{StaticResource BodyTextStyle}"/>
         </StackPanel>
 
-        <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="50 0 0 14">
+        <StackPanel VerticalAlignment="Bottom" Margin="50 0 0 14" Orientation="Horizontal">
             <TextBlock Text="{Binding CurrentPlaybackState}"  Style="{StaticResource BodyTextStyle}"/>
+
+            <TextBlock Text="{Binding CurrentFilter}"  Style="{StaticResource BodyTextStyle}"
+                       Margin="20 0 0 0"/>
         </StackPanel>
     </Grid>
 </Page>

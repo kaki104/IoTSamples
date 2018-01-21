@@ -74,13 +74,19 @@
 
   <rule id="selectFilter">
     <one-of>
-      <item> favorite </item>
-      <item> exciting </item>
+      <item> clear </item>
+      <item> jazz </item>
+      <item> metal </item>
       <item> dance </item>
       <item> ballad </item>
       <item> rap </item>
+      <item> blues </item>
+      <item> classic rock </item>
+      <item> country </item>
+      <item> disco </item>
+      <item> funk </item>
+      <item> hip-hop </item>
     </one-of>
   </rule>
-
 </grammar>
 

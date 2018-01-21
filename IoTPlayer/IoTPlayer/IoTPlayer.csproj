@@ -116,6 +116,7 @@
     <Compile Include="Activation\ActivationHandler.cs" />
     <Compile Include="Behaviors\MediaPlayerBehavior.cs" />
     <Compile Include="Commons\CommandMediaPlayer.cs" />
+    <Compile Include="Commons\ResultMediaPlayer.cs" />
     <Compile Include="Helpers\CommonHelper.cs" />
     <Compile Include="Helpers\Json.cs" />
     <Compile Include="Helpers\SettingsStorageExtensions.cs" />
@@ -195,6 +196,7 @@
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="SRGS.xml" />
+    <Content Include="TextFile1.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
