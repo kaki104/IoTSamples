@@ -15,7 +15,6 @@
                             PosterSource="{Binding PosterSource, Mode=OneWay}">
             <MediaPlayerElement.TransportControls>
                 <MediaTransportControls IsCompact="False"
-                                        IsStopEnabled="True" IsStopButtonVisible="True"
                                         IsPreviousTrackButtonVisible="True"
                                         IsNextTrackButtonVisible="True" IsPlaybackRateEnabled="True"/>
             </MediaPlayerElement.TransportControls>

@@ -299,14 +299,7 @@ namespace IoTPlayer.ViewModels
                 case "PAUSE":
                     executeAction = () =>
                     {
-                        //await CommonHelper.ShowMessageAsync("PAUSE playback");
                         MessengerInstance.Send(CommandMediaPlayer.Pause);
-                    };
-                    break;
-                case "STOP":
-                    executeAction = async () =>
-                    {
-                        await CommonHelper.ShowMessageAsync("STOP playback");
                     };
                     break;
                 case "NEXT":
