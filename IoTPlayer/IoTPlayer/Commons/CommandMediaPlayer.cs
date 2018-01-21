@@ -11,6 +11,9 @@ namespace IoTPlayer.Commons
         None,
         Play,
         Pause,
-        Stop
+        Next,
+        Previous,
+        AddFilter,
+        RemoveFilter
     }
 }
