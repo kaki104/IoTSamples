@@ -22,6 +22,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Threading;
+using IoTPlayer.Commons;
 using IoTPlayer.Helpers;
 using IoTPlayer.Services;
 using FileAttributes = Windows.Storage.FileAttributes;
@@ -65,6 +66,7 @@ namespace IoTPlayer.ViewModels
         private MediaPlayerState _currentPlaybackState;
 
         private string _firstFolderToken;
+        private CommandMediaPlayer _commandMediaPlayer;
 
         /// <summary>
         /// 포스터 소스
@@ -74,7 +76,9 @@ namespace IoTPlayer.ViewModels
             get { return _posterSource; }
             set { Set(ref _posterSource, value); }
         }
-
+        /// <summary>
+        /// 기본 생성자
+        /// </summary>
         public MediaPlayerViewModel()
         {
             //Source = MediaSource.CreateFromUri(new Uri(DefaultSource));
@@ -284,18 +288,19 @@ namespace IoTPlayer.ViewModels
                 case "BEGIN":
                     executeAction = async () =>
                     {
-                        var resunt = await BeginPlaybackAsync();
-                        if (resunt == false)
+                        if (Source == null)
                         {
-                            //에러 메시지 출력?
+                            var resunt = await BeginPlaybackAsync();
+                            if (resunt == false) return;
                         }
-
+                        MessengerInstance.Send(CommandMediaPlayer.Play);
                     };
                     break;
                 case "PAUSE":
-                    executeAction = async () =>
+                    executeAction = () =>
                     {
-                        await CommonHelper.ShowMessageAsync("PAUSE playback");
+                        //await CommonHelper.ShowMessageAsync("PAUSE playback");
+                        MessengerInstance.Send(CommandMediaPlayer.Pause);
                     };
                     break;
                 case "STOP":
