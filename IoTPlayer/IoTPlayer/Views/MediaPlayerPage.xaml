@@ -11,10 +11,8 @@
     mc:Ignorable="d">
     <Grid Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
         <MediaPlayerElement x:Name="mpe"
-                            AutoPlay="True"
                             AreTransportControlsEnabled="True"
-                            PosterSource="{Binding PosterSource, Mode=OneWay}"
-                            Source="{Binding Source, Mode=OneWay}">
+                            PosterSource="{Binding PosterSource, Mode=OneWay}">
             <MediaPlayerElement.TransportControls>
                 <MediaTransportControls IsCompact="False"
                                         IsStopEnabled="True" IsStopButtonVisible="True"
@@ -22,7 +20,9 @@
                                         IsNextTrackButtonVisible="True" IsPlaybackRateEnabled="True"/>
             </MediaPlayerElement.TransportControls>
             <interactivity:Interaction.Behaviors>
-                <behaviors:MediaPlayerBehavior CurrentPlaybackState="{Binding CurrentPlaybackState, Mode=TwoWay}"/>
+                <behaviors:MediaPlayerBehavior
+                    Source="{Binding Source, Mode=OneWay}"
+                    CurrentPlaybackState="{Binding CurrentPlaybackState, Mode=TwoWay}"/>
             </interactivity:Interaction.Behaviors>
         </MediaPlayerElement>
 
@@ -30,6 +30,10 @@
             <TextBlock Text="{Binding Title}" Style="{StaticResource PageTitleStyle}"/>
             <TextBlock Text="{Binding Album}" Style="{StaticResource BodyTextStyle}"/>
             <TextBlock Text="{Binding Artist}"  Style="{StaticResource BodyTextStyle}"/>
+        </StackPanel>
+
+        <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="50 0 0 14">
+            <TextBlock Text="{Binding CurrentPlaybackState}"  Style="{StaticResource BodyTextStyle}"/>
         </StackPanel>
     </Grid>
 </Page>
