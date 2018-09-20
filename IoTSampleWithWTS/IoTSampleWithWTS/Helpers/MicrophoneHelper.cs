@@ -28,6 +28,8 @@ namespace IoTSampleWithWTS.Helpers
             _storageFile = await ApplicationData.Current.LocalFolder
                 .CreateFileAsync(_outputFilename, CreationCollisionOption.ReplaceExisting);
 
+          Debug.WriteLine($"StartRecordingAsync : {_storageFile.Path}");
+
             await InitialiseAudioGraph();
             await InitialiseAudioFileOutputNode();
             await InitialiseAudioFeed();

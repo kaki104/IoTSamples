@@ -30,9 +30,10 @@
 
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Content="Start" FontSize="40" Margin="10" Command="{Binding StartRecodingCommand}" />
+                    <Button Content="Start" FontSize="40" Margin="10" Command="{Binding StartRecodingCommand}"/>
                     <Button Content="Stop" FontSize="40" Margin="10" Command="{Binding StopRecodingCommand}" />
                 </StackPanel>
+                <TextBlock Text="{Binding IsRecoding}"/>
                 <TextBox x:Name="Result" Text="{Binding ResponseText}" FontSize="20" />
             </StackPanel>
         </Grid>

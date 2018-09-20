@@ -101,6 +101,9 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>10.0.3</Version>
     </PackageReference>
+    <PackageReference Include="ObservableVoiceCapture">
+      <Version>0.0.3</Version>
+    </PackageReference>
     <!-- Nuget package references -->
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +185,7 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <Content Include="TextFile1.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
