@@ -1,0 +1,2 @@
+﻿https://github.com/yuka1984/ObservableVoiceCapture
+프로젝트 경로

@@ -31,7 +31,6 @@ namespace IoTPlayer.ViewModels
         private const string SRGS_FILE_NAME = "SRGS.xml";
         private string _album;
         private string _artist;
-        private CommandMediaPlayer _commandMediaPlayer;
         private string _currentFilter;
 
         private MediaPlaybackState _currentPlaybackState;
