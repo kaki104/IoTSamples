@@ -29,7 +29,7 @@ namespace IoTSampleWithWTS.Helpers
                         _language}";
         }
 
-        public async Task<string> GetTextResultAsync(string recordedFilename)
+        public async Task<string> GetTextFromAudioAsync(string recordedFilename)
         {
             var file = await ApplicationData.Current.LocalFolder.GetFileAsync(recordedFilename);
 
