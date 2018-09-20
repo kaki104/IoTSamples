@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Input;
 using IoTSampleWithWTS.Helpers;
 
@@ -43,6 +43,7 @@ namespace IoTSampleWithWTS.ViewModels
                 _fileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".wav";
                 await Singleton<MicrophoneHelper>.Instance.StartRecordingAsync(_fileName);
                 IsRecoding = true;
+                await Singleton<MicrophoneHelper>.Instance.StartRecordingAsync("test.wav");
             });
 
             StopRecodingCommand = new RelayCommand(async () =>

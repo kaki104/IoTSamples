@@ -16,8 +16,9 @@ namespace IoTSampleWithWTS.Helpers
         private const string CONVERSATION = "conversation";
         private const string DICTATION = "dictation";
 
-        private const string LANGUAGE = "en-US";
+        private readonly string _language = "ko-KR";
         private readonly string _requestUri;
+        private IAuthenticationService _authenticationService;
 
         public BingSpeechHelper()
         {
@@ -25,11 +26,10 @@ namespace IoTSampleWithWTS.Helpers
             _requestUri =
                 $@"https://speech.platform.bing.com/speech/recognition/{
                     INTERACTIVE}/cognitiveservices/v1?language={
-                        LANGUAGE}";
-
+                        _language}";
         }
 
-        public async Task<string> GetTextFromAudioAsync(string recordedFilename)
+        public async Task<string> GetTextResultAsync(string recordedFilename)
         {
             var file = await ApplicationData.Current.LocalFolder.GetFileAsync(recordedFilename);
 
@@ -40,7 +40,7 @@ namespace IoTSampleWithWTS.Helpers
                     client.DefaultRequestHeaders.Accept.Add(MediaTypeWithQualityHeaderValue.Parse("application/json"));
                     client.DefaultRequestHeaders.Accept.Add(MediaTypeWithQualityHeaderValue.Parse("text/xml"));
                     client.DefaultRequestHeaders.TransferEncoding.Add(TransferCodingHeaderValue.Parse("chunked"));
-                    client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "시크릿 입력필요");
+                    client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "API키를 입력하세요");
 
                     var content = new StreamContent(fileStream);
                     content.Headers.Add("ContentType", new[] {"audio/wav", "codec=audio/pcm", "samplerate=16000"});
@@ -53,7 +53,7 @@ namespace IoTSampleWithWTS.Helpers
 
                         content.Dispose();
 
-                        return speechResults?.DisplayText;
+                        return speechResults.DisplayText;
                     }
                     catch (Exception e)
                     {
